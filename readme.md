@@ -12,6 +12,8 @@
 
 - save your apikey to apikey.txt
 
+- set your invitationCode in config.json
+
 - run the script
 
   ```
