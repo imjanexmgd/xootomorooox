@@ -65,10 +65,38 @@ export async function tomoroLoginOrRegister(phoneNum, verifyCode, deviceCode) {
         channel: 'google play',
         revision: '3.0.0',
         type: 2,
-        source: '',
+        source: '563ZYE',
       },
       {
         headers: tomoroHeader(deviceCode),
+      }
+    );
+    return data;
+  } catch (error) {
+    throw error;
+  }
+}
+export async function tomoroModifyData(
+  deviceCode,
+  token,
+  email,
+  nickname,
+  gender,
+  birthday,
+  invitationCode
+) {
+  try {
+    const { data } = await axios.post(
+      'https://api-service.tomoro-coffee.id/portal/app/member/modifyData',
+      {
+        email: email,
+        nickname: nickname,
+        gender: parseInt(gender),
+        birth: birthday,
+        invitationCode: invitationCode,
+      },
+      {
+        headers: tomoroHeader(deviceCode, token),
       }
     );
     return data;
