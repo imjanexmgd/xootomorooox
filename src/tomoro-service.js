@@ -86,7 +86,7 @@ export async function tomoroModifyData(
   invitationCode
 ) {
   try {
-    const { data } = await axios.post(
+    const res = await axios.post(
       'https://api-service.tomoro-coffee.id/portal/app/member/modifyData',
       {
         email: email,
@@ -99,7 +99,30 @@ export async function tomoroModifyData(
         headers: tomoroHeader(deviceCode, token),
       }
     );
-    return data;
+    // console.log(res.headers);
+
+    return res;
+  } catch (error) {
+    throw error;
+  }
+}
+export async function setPassword(deviceCode, token, md5pass) {
+  try {
+    const { data } = await axios.post(
+      'https://api-service.tomoro-coffee.id/portal/app/member/v2/setPassWord',
+      {
+        password: `${md5pass}`,
+      },
+      {
+        headers: tomoroHeader(deviceCode, token),
+      }
+    );
+    if (data.success == false) {
+      console.log(data);
+
+      throw 'failed set pin';
+    }
+    console.log(data);
   } catch (error) {
     throw error;
   }
