@@ -32,6 +32,8 @@ const config = JSON.parse(
     if (config) {
       loggerInfo(`Found invitationCode ${config.invitationCode}`);
     }
+    const OPERATOR = 'xl';
+    const MAX_PRICE = '0.032';
 
     const apikey = readFileSync('apikey.txt', 'utf-8');
     const smshub = new smssxck(apikey);
@@ -45,8 +47,8 @@ const config = JSON.parse(
     const { PHONE_NUMBER, ORDER_ID } = await smshub.getNumber(
       'ang',
       '6',
-      'telkomsel',
-      '0.0444'
+      OPERATOR,
+      MAX_PRICE
     );
     let phoneNum = PHONE_NUMBER.replace(/^62/, '');
     loggerInfo(`Trying request otp to ${phoneNum}`);
@@ -79,8 +81,8 @@ const config = JSON.parse(
           const reOrder = await smshub.getNumber(
             'ang',
             '6',
-            'telkomsel',
-            '0.0444'
+            OPERATOR,
+            MAX_PRICE
           );
           phoneNum = reOrder.PHONE_NUMBER.replace(/^62/, '');
           orderid = reOrder.ORDER_ID;
