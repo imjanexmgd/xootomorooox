@@ -17,7 +17,7 @@ export const loggerSuccess = (message) => {
 };
 export const loggerInfo = (message) => {
   const formattedMessage = timestampMessage(
-    `${chalk.green.underline('info')} ${message}`
+    `${chalk.cyan.underline('info')} ${message}`
   );
   return console.log(formattedMessage);
 };
