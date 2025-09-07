@@ -17,7 +17,7 @@
 - run the script
 
   ```
-  node register.js
+  node index.js
   ```
 
   ![proof](/docs/proof.png)
