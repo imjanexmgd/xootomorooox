@@ -1,10 +1,10 @@
 export default (deviceCode, token) => {
   return {
-    'User-Agent': 'okhttp/4.11.0',
+    'User-Agent': 'okhttp/5.1.0',
     Connection: 'Keep-Alive',
     'Accept-Encoding': 'gzip',
     'Content-Type': 'application/json',
-    revision: '3.3.5',
+    revision: '3.3.7',
     countryCode: 'id',
     appChannel: 'google play',
     appLanguage: 'en',
@@ -12,7 +12,7 @@ export default (deviceCode, token) => {
     deviceCode: deviceCode,
     ucde: 't698',
     wToken:
-      '0003_984614388F42C9E15218848EFF3D5A63990F4DFD819CEE6CA542F0B6B95856D59D60BA2F0CB2DCEEDE6DE625006E964E86753C4E1411UOPyiatPdJxVDCVka4OmK7ObPdj2/pXGZeMm3fhu5Bex7KPbQMKyEJc1CCqSWjREqY3a1cTmPxOCCSG+hevig/yi7IDOUFBZHFfj/Y66kgmUNGUzuBBf3SD9p4fb5n0MCX/sCr2kA++S5ou7MKZWYO62DL9txSQJ22/03Ma1Ktzvi6b8zFvHffLcMNFOZAbvPB9SBVEEE+UqHsmxHgqXsHcV6XuAXEHP3+gkQpYtwLUDDJYBU593BH3A13WZx8GatwcV2hKm2sPSc0pycHHV6hObZlnFu/10Us5VKXyHWAMVlmLTz7qQe0Z5TPF8J6B2Q2PI1INME2/trPje6dFMSQ/ZVkSGyasBxrQGngcoR4pRvSY7keJdSbSnD+FPMQPhVe9/u/RI4vJt1Be75zTG5JFAo0uDu1cRobBJujqVzZExeBuAcmGc4E9kLf3pFD8CHILrQzQBMGM8jZ+7Pw3IA1QihD0tUWLEZQxZUAG3pcnBWM8m+TkR0M/Nr2O0V5N4KyGudEck1XOxXUFkD1r51bmB9aq1gDH9cTxJkDTg7Gw=_fHx8',
+      '0004_9A14E3533434CFFC7B2F5F6DBD88551EB91AAA9A36EC326650B71F21BDB0E8D3083495DC04BB6C50E116BE8528F9C08F041398AE141BefPGrreevJE7RN5zm6Ihd+xVJIoGvQwJnYhMN8ENK+A9iQCpCrPuJ+QqVhXpwwIQRYbDqHHImaV09yq8rk1oZ6AijIN4SRu9ZoyXWkiRYDUHyvYTKmIsff6gSOqP1Wl5wbdUQBbPKmbnMzsrRSjoi51I+/qAzYSsnA671+rF235wS/GMkrAnM/dGm6qvpdYoGjFdj1PHNpxWHvSSnIFVZDgKoWjRm0igRWvLTRnbJWR20/xfuMNW8yyQe+rAbSCCEoWidACkTWCQ4qOqv3rm53mxwQNvKbDAGgx2Y0VvUHu9zyhn7MHOSLZcLhbFDrV7KyN9xl6E2X6/+EWrnsyu3GxLu3RY/SJPpDPlnvRHihrHynSY8QZhBAz5TfNIYkLT/6Kpf59L48trSiDOaUr2o5NkrKIqsYuNML398rcJbEbazTSRlmiN+3sXuhsUgrvT9EVjpQ/lHWfJ6QDMUrFNmGtdjkzxVkdXtbDcv0KmO9N7qTWPQMJgdQ3DRHGykKLA8anpxvavgxD/St5aBgOBPoJRxMwASCNjEBRlZexC+2bAmnUcnV+sD9zp71Qsjv7YyhpWg+eMkqTac8m2n5J0JmxnB+xBrB35zao1NWyPA9/oGhxcfORhC3iYFEwHlEzBV6K0pGu/iy+OhqvUVw+25eESr8IfuLHwcIDBhVknvB6VZuE0wrIVFBjJNkBMBuLUNLNDIIeEuCzklVdxTo3y3A==_fHw=_ddb6cb8e14fec33a-h-1761287023459-a9c9f59583a045c6be3a8d68fcf25705',
     ...(token ? { token } : {}),
   };
 };
