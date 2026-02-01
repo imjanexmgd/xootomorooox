@@ -1,5 +1,5 @@
 import os from 'node:os';
-import smssxck from 'smssxck';
+import SmsProvider from './src/smsClient.js';
 import clear from './src/clear.js';
 import {
   setPassword,
@@ -19,7 +19,7 @@ const generateRandomString = () => {
     .slice(0, 16);
 };
 const config = JSON.parse(
-  readFileSync(new URL('./config.json', import.meta.url))
+  readFileSync(new URL('./config.json', import.meta.url)),
 );
 (async () => {
   try {
@@ -30,13 +30,13 @@ const config = JSON.parse(
       loggerInfo(`found invitation code ${config.invitationCode}`);
     }
     const OPERATOR = 'xl';
-    const MAX_PRICE = '0.032';
+    const MAX_PRICE = '0.041';
     const apikey = readFileSync('apikey.txt', 'utf-8');
 
     loggerInfo(`using operator ${OPERATOR} max price ${MAX_PRICE}`);
-    const smshub = new smssxck(apikey);
+    const smshub = new SmsProvider({ apiKey: apikey, provider: 'heroSms' });
     const balanceSmshub = await smshub.getBalance();
-    if (parseInt(balanceSmshub.ACCESS_BALANCE) === 0) {
+    if (balanceSmshub.ACCESS_BALANCE == 0) {
       return loggerFailed('no balance');
     }
 
@@ -45,9 +45,13 @@ const config = JSON.parse(
     const { PHONE_NUMBER, ORDER_ID } = await smshub.getNumber(
       'ang',
       '6',
-      OPERATOR,
-      MAX_PRICE
+      'any',
+      MAX_PRICE,
     );
+    if (!PHONE_NUMBER) {
+      console.log('failed obtain number');
+      return;
+    }
     let phoneNum = PHONE_NUMBER.replace(/^62/, '');
     loggerInfo(`Trying request otp to ${phoneNum}`);
     await tomoroReqOtp(phoneNum, deviceCode);
@@ -71,10 +75,10 @@ const config = JSON.parse(
       logUpdate(
         `[${format(
           new Date(),
-          'HH:mm:ss.SSS'
+          'HH:mm:ss.SSS',
         )}] waiting OTP (ORDER_ID: ${orderid}) ${frame} waited ${Math.floor(
-          totalTimeWaited / 1000
-        )}s`
+          totalTimeWaited / 1000,
+        )}s`,
       );
       if (totalTimeWaited - lastCheck >= CHECK_INTERVAL) {
         const { CODE } = await smshub.getCode(orderid);
@@ -84,8 +88,8 @@ const config = JSON.parse(
           code = CODE;
           logUpdate.clear();
           loggerSuccess(`Success get Code ${code}`);
-          const { STATUS } = await smshub.changeStatus(orderid, '3');
-          loggerSuccess(`success change status ${orderid} to ${STATUS}`);
+          const status = await smshub.changeStatus(orderid, '3');
+          loggerSuccess(`success change status orderid ${orderid}`);
           break;
         }
 
@@ -93,14 +97,14 @@ const config = JSON.parse(
           logUpdate.clear();
           loggerFailed(`no otp found`);
           if (reOrderNum === true) {
-            const { STATUS } = await smshub.changeStatus(orderid, '8');
-            loggerSuccess(`success change status ${orderid} to ${STATUS}`);
+            const status = await smshub.changeStatus(orderid, '8');
+            loggerSuccess(`success change status orderid ${orderid}`);
 
             const reOrder = await smshub.getNumber(
               'ang',
               '6',
-              OPERATOR,
-              MAX_PRICE
+              'any',
+              MAX_PRICE,
             );
             phoneNum = reOrder.PHONE_NUMBER.replace(/^62/, '');
             orderid = reOrder.ORDER_ID;
@@ -124,7 +128,7 @@ const config = JSON.parse(
     const verfyingCode = await tomoroLoginOrRegister(
       phoneNum,
       code,
-      deviceCode
+      deviceCode,
     );
     loggerSuccess('Success loginOrRegister');
     loggerInfo(
@@ -135,8 +139,8 @@ const config = JSON.parse(
           token: verfyingCode.data.token,
         },
         null,
-        2
-      )
+        2,
+      ),
     );
     let token = verfyingCode.data.token;
     let email = null;

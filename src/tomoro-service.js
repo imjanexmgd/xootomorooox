@@ -1,58 +1,42 @@
 import axios from 'axios';
 import tomoroHeader from './tomoro-header.js';
-import { loggerInfo, loggerSuccess } from './logger.js';
+import { loggerInfo, loggerSuccess, loggerFailed } from './logger.js';
+import { HttpsProxyAgent } from 'https-proxy-agent';
 
-export async function tomoroLogout(deviceCode, token) {
-  try {
-    const { data } = await axios.post(
-      'https://api-service.tomoro-coffee.id/portal/app/member/logout',
-      '',
-      {
-        headers: tomoroHeader(token, deviceCode),
-      }
-    );
-    console.log(data);
-  } catch (error) {
-    console.log('failed logout');
-    throw error;
+const createConfig = (deviceCode, token = null, proxyUrl = null) => {
+  const config = {
+    headers: tomoroHeader(deviceCode, token),
+    timeout: 15000,
+  };
+  if (proxyUrl) {
+    config.httpsAgent = new HttpsProxyAgent(proxyUrl);
+    config.proxy = false;
   }
-}
-export async function tomoroReqOtp(phoneNum, deviceCode) {
-  try {
-    loggerInfo(`Sending otp to ${phoneNum}`);
+  return config;
+};
 
+export async function tomoroReqOtp(phoneNum, deviceCode, proxyUrl = null) {
+  try {
+    const config = createConfig(deviceCode, null, proxyUrl);
+    config.params = { phone: phoneNum, areaCode: '62', verifyChannel: 'SMS' };
     const r = await axios.get(
       'https://api-service.tomoro-coffee.id/portal/app/member/sendMessage',
-      {
-        params: {
-          phone: phoneNum, // 8xxxxxxxx
-          areaCode: '62',
-          verifyChannel: 'SMS',
-        },
-        headers: tomoroHeader(deviceCode),
-      }
+      config,
     );
-    if (r.data.success == false) {
-      loggerFailed(r.data.msg);
-      if (r.data.msg == 'Request too frequent. Please try again in 1 hour') {
-        const response = {
-          success: false,
-          limit: true,
-          msg: r.data.msg,
-        };
-        return response;
-      }
-      throw Error(r.data.msg);
-    }
-
-    loggerSuccess(`OTP success send to ${phoneNum}`);
-    return { success: true, serverRequestId: r.data.serverRequestId };
+    return r.data;
   } catch (error) {
-    throw error;
+    return { success: false, msg: error.message };
   }
 }
-export async function tomoroLoginOrRegister(phoneNum, verifyCode, deviceCode) {
+
+export async function tomoroLoginOrRegister(
+  phoneNum,
+  verifyCode,
+  deviceCode,
+  proxyUrl = null,
+) {
   try {
+    const config = createConfig(deviceCode, null, proxyUrl);
     const { data } = await axios.post(
       'https://api-service.tomoro-coffee.id/portal/app/member/loginOrRegister',
       {
@@ -67,63 +51,63 @@ export async function tomoroLoginOrRegister(phoneNum, verifyCode, deviceCode) {
         type: 2,
         source: '563ZYE',
       },
-      {
-        headers: tomoroHeader(deviceCode),
-      }
+      config,
     );
     return data;
   } catch (error) {
-    throw error;
+    throw new Error(`Login Failed: ${error.message}`);
   }
 }
+
 export async function tomoroModifyData(
   deviceCode,
   token,
-  email,
-  nickname,
-  gender,
-  birthday,
-  invitationCode
+  payload,
+  proxyUrl = null,
 ) {
   try {
-    const res = await axios.post(
+    const config = createConfig(deviceCode, token, proxyUrl);
+    const { data } = await axios.post(
       'https://api-service.tomoro-coffee.id/portal/app/member/modifyData',
       {
-        email: email,
-        nickname: nickname,
-        gender: parseInt(gender),
-        birth: birthday,
-        invitationCode: invitationCode,
+        email: payload.email || '',
+        nickname: payload.nickname || 'User',
+        gender: parseInt(payload.gender) || 1, // 1: Male, 2: Female
+        birth: payload.birthday || '2000-01-01',
+        invitationCode: payload.invitationCode || '',
       },
-      {
-        headers: tomoroHeader(deviceCode, token),
-      }
+      config,
     );
-    // console.log(res.headers);
-
-    return res;
+    return data;
   } catch (error) {
-    throw error;
+    throw new Error(`Modify Data Failed: ${error.message}`);
   }
 }
-export async function setPassword(deviceCode, token, md5pass) {
+
+export async function setPassword(deviceCode, token, md5pass, proxyUrl = null) {
   try {
+    const config = createConfig(deviceCode, token, proxyUrl);
     const { data } = await axios.post(
       'https://api-service.tomoro-coffee.id/portal/app/member/v2/setPassWord',
-      {
-        password: `${md5pass}`,
-      },
-      {
-        headers: tomoroHeader(deviceCode, token),
-      }
+      { password: `${md5pass}` },
+      config,
     );
-    if (data.success == false) {
-      console.log(data);
-
-      throw 'failed set pin';
-    }
-    console.log(data);
+    return data;
   } catch (error) {
-    throw error;
+    throw new Error(`Set PIN Failed: ${error.message}`);
+  }
+}
+
+export async function tomoroLogout(deviceCode, token, proxyUrl = null) {
+  try {
+    const config = createConfig(deviceCode, token, proxyUrl);
+    const { data } = await axios.post(
+      'https://api-service.tomoro-coffee.id/portal/app/member/logout',
+      {},
+      config,
+    );
+    return data;
+  } catch (error) {
+    return { success: false, msg: error.message };
   }
 }

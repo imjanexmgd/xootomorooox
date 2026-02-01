@@ -4,7 +4,7 @@ export default (deviceCode, token) => {
     Connection: 'Keep-Alive',
     'Accept-Encoding': 'gzip',
     'Content-Type': 'application/json',
-    revision: '3.3.7',
+    revision: '3.3.10',
     countryCode: 'id',
     appChannel: 'google play',
     appLanguage: 'en',
