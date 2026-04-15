@@ -1,6 +1,7 @@
 import os from 'node:os';
 import SmsProvider from './src/smsClient.js';
 import clear from './src/clear.js';
+import 'dotenv/config'
 import {
   setPassword,
   tomoroLoginOrRegister,
@@ -31,7 +32,7 @@ const config = JSON.parse(
     }
     const OPERATOR = 'xl';
     const MAX_PRICE = '0.041';
-    const apikey = readFileSync('apikey.txt', 'utf-8');
+    const apikey = process.env.HEROSMS_API_KEY
 
     loggerInfo(`using operator ${OPERATOR} max price ${MAX_PRICE}`);
     const smshub = new SmsProvider({ apiKey: apikey, provider: 'heroSms' });

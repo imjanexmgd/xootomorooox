@@ -39,6 +39,7 @@ export default class SmsProvider {
 
   async #call(params) {
     const url = `${this.#baseUrl}&${params}`;
+    // console.log(url)
     const { body, statusCode } = await request(url);
     if (statusCode !== 200) {
       throw new Error(`HTTP ${statusCode}`);
@@ -87,8 +88,8 @@ export default class SmsProvider {
 
   async getCode(orderId) {
     const res = await this.#call(`action=getStatus&id=${orderId}`);
+
     // JSON (sms-activate)
-    // console.log(res);
     if (typeof res === 'object') {
       if (res.status === 'received') {
         return { CODE: res.code };
@@ -107,5 +108,13 @@ export default class SmsProvider {
   async changeStatus(orderId, status) {
     await this.#call(`action=setStatus&id=${orderId}&status=${status}`);
     return true;
+  }
+  async getPrices(service, country) {
+    const res = await this.#call(
+      `action=getPrices&service=${service}&country=${country}`,
+    );
+    //
+    // console.log(res[country]);
+    return res;
   }
 }
