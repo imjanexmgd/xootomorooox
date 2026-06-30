@@ -1,6 +1,5 @@
 import axios from 'axios';
 import tomoroHeader from './tomoro-header.js';
-import { loggerInfo, loggerSuccess, loggerFailed } from './logger.js';
 import { HttpsProxyAgent } from 'https-proxy-agent';
 
 const createConfig = (deviceCode, token = null, proxyUrl = null) => {
@@ -23,6 +22,7 @@ export async function tomoroReqOtp(phoneNum, deviceCode, proxyUrl = null) {
       'https://api-service.tomoro-coffee.id/portal/app/member/sendMessage',
       config,
     );
+    console.log(r.data)
     return r.data;
   } catch (error) {
     return { success: false, msg: error.message };
@@ -97,7 +97,99 @@ export async function setPassword(deviceCode, token, md5pass, proxyUrl = null) {
     throw new Error(`Set PIN Failed: ${error.message}`);
   }
 }
+export async function checkMemberByPhone(deviceCode, phoneNum, areaCode = '62', proxyUrl = null) {
+  try {
+    const config = createConfig(deviceCode, null, proxyUrl);
 
+    config.params = {
+      phone: phoneNum,
+      areaCode: areaCode,
+    };
+
+    const { data } = await axios.get(
+      'https://api-service.tomoro-coffee.id/portal/app/member/v2/checkMemberByPhone',
+      config,
+    );
+
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw new Error(`Check Member Failed: ${error.message}`);
+  }
+}
+export async function loginPhone(deviceCode, phoneNum, md5pass, phoneArea = '62', proxyUrl = null) {
+  try {
+    const config = createConfig(deviceCode, null, proxyUrl);
+    const { data } = await axios.post(
+      'https://api-service.tomoro-coffee.id/portal/app/member/v2/loginPhone',
+      {
+        'phoneArea': phoneArea,
+        'phone': phoneNum,
+        'password': md5pass,
+      },
+      config,
+    );
+    return data;
+  } catch (error) {
+    throw new Error(`Login Failed: ${error.message}`);
+  }
+}
+export async function getStoreList(deviceCode, searchQuery = '', proxyUrl = null) {
+  try {
+    const config = createConfig(deviceCode, null, proxyUrl);
+    config.params = {
+      'pageNo': '1',
+      'pageSize': '20',
+      'storeName': searchQuery || '',
+    };
+
+    const { data } = await axios.get(
+      'https://api-service.tomoro-coffee.id/portal/app/basic/storeInfo/getStoreList/v3',
+      config,
+    );
+
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw new Error(`Check Member Failed: ${error.message}`);
+  }
+}
+export async function getMenuList(deviceCode, storeCode, proxyUrl = null) {
+  try {
+    const config = createConfig(deviceCode, null, proxyUrl);
+    config.params = {
+      'storeCode': storeCode,
+      'mainMenuType': '1'
+    };
+
+    const { data } = await axios.get(
+      'https://api-service.tomoro-coffee.id/portal/app/basic/menu/getMenuList',
+      config,
+    );
+
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw new Error(`Check Member Failed: ${error.message}`);
+  }
+}
+export async function getMenuDetail(deviceCode, storeCode, itemCode, proxyUrl = null) {
+  try {
+    const config = createConfig(deviceCode, null, proxyUrl);
+    config.params = {
+      'storeCode': storeCode,
+      'itemCode': itemCode,
+      'mainMenuType': '1'
+    }
+    const { data } = await axios.get(
+      'https://api-service.tomoro-coffee.id/portal/app/basic/item/getItemDetails',
+      config,
+    );
+    return data.data
+  } catch (error) {
+    console.log(error)
+  }
+}
 export async function tomoroLogout(deviceCode, token, proxyUrl = null) {
   try {
     const config = createConfig(deviceCode, token, proxyUrl);

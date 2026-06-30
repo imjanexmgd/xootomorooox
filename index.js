@@ -33,6 +33,7 @@ const config = JSON.parse(
     const OPERATOR = 'xl';
     const MAX_PRICE = '0.041';
     const apikey = process.env.HEROSMS_API_KEY
+    console.log(`using api key ${apikey}`);
 
     loggerInfo(`using operator ${OPERATOR} max price ${MAX_PRICE}`);
     const smshub = new SmsProvider({ apiKey: apikey, provider: 'heroSms' });
